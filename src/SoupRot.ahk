@@ -9,12 +9,12 @@
 	Methods & Parameters:
 ---------------
 	soupRot.enc()	- encode string
-		str			- string to encode
+		str		- string to encode
 		mult 		- rotation iteration count
 		junk		- random character count to be added (default: 0)
 	
 	soupRot.dec()	- decode string
-		str			- string to decode
+		str		- string to decode
 		mult		- rotation iteration count used to encode
 		junk		- random character count used to encode (default: 0)
 	
@@ -23,9 +23,6 @@
 		rand()
 		ifContains()
 		isDigit()
-		b64e()		- encode string
-		b64d()		- decode string (utf-8)
-		strPutVar()	- for b64e()
 ---------------
 
 	Example:
@@ -37,16 +34,14 @@ str:="Hello° µWorld"
 encStr:=soupRot.enc(str,iterationCnt,junk)
 decStr:=soupRot.dec(encStr,iterationCnt,junk)
 
-msgbox,,SoupRot,% encStr "`n`n" decStr
+msgbox,,SoupRot,% "Original String: " str "`n`nEncrypted String: " encStr "`n`nDecrypted String: " decStr
 ------------
 
 */
 
 class soupRot {
 	enc(str,mult,junk:=0){
-		this.b64e(bStr,str)
-
-		str:=bStr
+		str:=LC_Base64_EncodeText(str)
 		rotBase:=strLen(str) * mult
 		
 		for i,a in strSplit(str) {
@@ -95,8 +90,7 @@ class soupRot {
 				skip:=junk
 			}
 		}
-		this.b64d(bStr,nStr)
-		return rTrim(bStr,chr(65533)) ;"�"
+		return rTrim(LC_Base64_DecodeText(nStr),chr(65533)) ;"�"
 	}
 	
 	; Dependencies
@@ -136,24 +130,5 @@ class soupRot {
 	isDigit(in){
 		if in is digit
 			return 1
-	}
-	b64e(byRef outData,byRef inData ){
-		inDataLen:=this.strPutVar(inData,inData,"UTF-8") - 1
-		dllCall("Crypt32.dll\CryptBinaryToString","UInt",&inData,"UInt",inDataLen,"UInt",1,"UInt",0,"UIntP",tChars,"CDECL Int")
-		varSetCapacity(outData,req:=tChars * (a_isUnicode?2:1),0)
-		dllCall("Crypt32.dll\CryptBinaryToString","UInt",&inData,"UInt",inDataLen,"UInt",1,"Str",outData,"UIntP",req,"CDECL Int")
-		return tChars
-	}
-	b64d(byRef outData,byRef inData){
-		dllCall("Crypt32.dll\CryptStringToBinary","UInt",&inData,"UInt",strLen(inData),"UInt",1,"UInt",0,"UIntP",bytes,"Int",0,"Int",0,"CDECL Int")
-		varSetCapacity(outData,req:=bytes * (a_isUnicode?2:1),0)
-		dllCall("Crypt32.dll\CryptStringToBinary","UInt",&inData,"UInt",strLen(inData),"UInt",1,"Str",outData,"UIntP",req,"Int",0,"Int",0,"CDECL Int")
-		outData:=strGet(&outData,"utf-8")
-		return bytes
-	}
-	strPutVar(string,byRef var,encoding){
-		varSetCapacity(var,strPut(string,encoding)
-			* ((encoding="utf-16"||encoding="cp1200")?2:1))
-		return strPut(string,&var,encoding)
 	}
 }
