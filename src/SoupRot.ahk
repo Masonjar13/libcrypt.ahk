@@ -8,21 +8,21 @@
 
 	Methods & Parameters:
 ---------------
-	soupRot.enc()	- encode string
+	LC_soupRot.enc()	- encode string
 		str		- string to encode
 		mult 		- rotation iteration count
 		junk		- random character count to be added (default: 0)
 	
-	soupRot.dec()	- decode string
+	LC_soupRot.dec()	- decode string
 		str		- string to decode
 		mult		- rotation iteration count used to encode
 		junk		- random character count used to encode (default: 0)
 	
 	dependencies (can be found at https://github.com/Masonjar13/AHK-Library)
-		randStr()
-		rand()
-		ifContains()
-		isDigit()
+		_randStr()
+		_rand()
+		_ifContains()
+		_isDigit()
 ---------------
 
 	Example:
@@ -31,15 +31,15 @@ iterationCnt:=a_tickCount
 junk:=0
 str:="Hello° µWorld"
 
-encStr:=soupRot.enc(str,iterationCnt,junk)
-decStr:=soupRot.dec(encStr,iterationCnt,junk)
+encStr:=LC_soupRot.enc(str,iterationCnt,junk)
+decStr:=LC_soupRot.dec(encStr,iterationCnt,junk)
 
 msgbox,,SoupRot,% "Original String: " str "`n`nEncrypted String: " encStr "`n`nDecrypted String: " decStr
 ------------
 
 */
 
-class soupRot {
+class LC_soupRot {
 	enc(str,mult,junk:=0){
 		str:=LC_Base64_EncodeText(str)
 		rotBase:=strLen(str) * mult
@@ -95,39 +95,39 @@ class soupRot {
 	
 	; Dependencies
 	
-	randStr(lowerBound,upperBound,mode:=1){
-		if (!this.isDigit(lowerBound)||!this.isDigit(upperBound)||!this.isDigit(mode))
+	_randStr(lowerBound,upperBound,mode:=1){
+		if (!this._isDigit(lowerBound)||!this._isDigit(upperBound)||!this._isDigit(mode))
 			return -1
-		loop % this.rand(lowerBound,upperBound) {
+		loop % this._rand(lowerBound,upperBound) {
 			t:=""
 			if (strLen(mode)=1) {
 				t:=mode
 			} else {
-				while (!this.ifContains(mode,t))
-					t:=this.rand(1,4)
+				while (!this._ifContains(mode,t))
+					t:=this._rand(1,4)
 			}
 			if (t=1) {
-				str.=chr(this.rand(97,122))
+				str.=chr(this._rand(97,122))
 			} else if (t=2) {
-				str.=chr(this.rand(65,90))
+				str.=chr(this._rand(65,90))
 			} else if (t=3) {
-				str.=this.rand(0,9)
+				str.=this._rand(0,9)
 			} else if (t=4) {
-				i:=this.rand(1,4)
-				str.=i=1?chr(this.rand(33,47)):i=2?chr(this.rand(58,64)):i=3?chr(this.rand(91,96)):chr(this.rand(123,126))
+				i:=this._rand(1,4)
+				str.=i=1?chr(this._rand(33,47)):i=2?chr(this._rand(58,64)):i=3?chr(this._rand(91,96)):chr(this._rand(123,126))
 			}
 		}
 		return str
 	}
-	rand(lowerBound,upperBound){
+	_rand(lowerBound,upperBound){
 		random,rand,% lowerBound,% upperBound
 		return rand
 	}
-	ifContains(haystack,needle){
+	_ifContains(haystack,needle){
 		if haystack contains %needle%
 			return 1
 	}
-	isDigit(in){
+	_isDigit(in){
 		if in is digit
 			return 1
 	}
