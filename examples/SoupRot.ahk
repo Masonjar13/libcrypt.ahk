@@ -7,5 +7,5 @@ str:="Hello° µWorld"
 encStr:=soupRot.enc(str,iterationCnt,junk)
 decStr:=soupRot.dec(encStr,iterationCnt,junk)
 
-msgbox,,SoupRot,% encStr "`n`n" decStr
+msgbox,,SoupRot,% "Original String: " str "`n`nEncrypted String: " encStr "`n`nDecrypted String: " decStr
 exitApp
